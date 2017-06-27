@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/mkideal/cli"
+	"io/ioutil"
 	"os"
+	"path/filepath"
+	"regexp"
 )
 
 type ArgT struct {
@@ -59,6 +62,50 @@ func (argv *ArgT) Validate(ctx *cli.Context) error {
 
 func main() {
 	cli.Run(new(ArgT), func(ctx *cli.Context) error {
+		argv := ctx.Argv().(*ArgT)
+
+		tokenFileContent, err := ioutil.ReadFile(argv.TokenFile)
+		if err != nil {
+			return err
+		}
+
+		// extract token without white spaces
+		r, err := regexp.Compile("[a-z0-9]+")
+		if err != nil {
+			return err
+		}
+
+		bytes := r.Find(tokenFileContent)
+		if bytes == nil {
+			return fmt.Errorf("File %s does NOT contain token.", argv.TokenFile)
+		}
+		token := string(bytes)
+
+		/*
+			if argv.CreateOrg {
+				ctx.String("createOrg(serverURI, token, orgName)")
+			}
+		*/
+
+		if !argv.CreateOrg && argv.Repo != "" {
+			repoPathClean, err := filepath.Abs(argv.Repo)
+			if err != nil {
+				return err
+			}
+
+			projectName := argv.Project
+			if projectName == "" {
+				projectName = filepath.Base(repoPathClean)
+			}
+
+			cloneURL, err := createRepo(argv.Server, token, argv.Organization, projectName)
+			if err != nil {
+				return err
+			}
+
+			fmt.Printf("cd %s\ngit remote add gogs %s\ngit push --mirror gogs\n", repoPathClean, cloneURL)
+		}
+
 		return nil
 	}, "Create organization and mirror git repo to Gogs server")
 }
