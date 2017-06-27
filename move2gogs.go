@@ -37,6 +37,16 @@ func (argv *ArgT) Validate(ctx *cli.Context) error {
 		return fmt.Errorf("Following path isn't file: %v", argv.TokenFile)
 	}
 
+	// FIXME
+	if argv.Repo != "" && argv.Organization == "" {
+		return fmt.Errorf("Sorry, at the moment use without --org is not supported.")
+	}
+
+	if argv.Repo != "" && argv.Organization == "" {
+		return fmt.Errorf("Sorry, at the moment use of --create-org is not supported.")
+	}
+	// FIXME
+
 	if argv.CreateOrg && argv.Organization == "" {
 		return fmt.Errorf("You can not use --create-org without --org \"someorg\"")
 	}

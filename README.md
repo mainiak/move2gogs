@@ -1,5 +1,13 @@
 # Move to Gogs
 
+## Install
+
+```
+go get -u -v github.com/mainiak/move2gogs
+go build github.com/mainiak/move2gogs
+go install github.com/mainiak/move2gogs
+```
+
 ## Usage
 
 ### How to obtain API token
