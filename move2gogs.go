@@ -8,6 +8,7 @@ import (
 
 type ArgT struct {
 	cli.Helper
+	Server       string `cli:"s,server" usage:"Server URI - URL to your Gogs instance"`
 	Organization string `cli:"o,org" usage:"Organization name"`
 	CreateOrg    bool   `cli:"create-org" usage:"Create organization if it doesn't exist"`
 	TokenFile    string `cli:"token-file" usage:"Path to file with API token for Gogs"`
@@ -16,6 +17,10 @@ type ArgT struct {
 }
 
 func (argv *ArgT) Validate(ctx *cli.Context) error {
+	if argv.Server == "" {
+		return fmt.Errorf("Server URI must be specified")
+	}
+
 	if argv.TokenFile == "" {
 		return fmt.Errorf("Path to file with API token for Gogs must be specified")
 	}
