@@ -34,21 +34,24 @@ func (argv *ArgT) Validate(ctx *cli.Context) error {
 		return fmt.Errorf("Following path isn't file: %v", argv.TokenFile)
 	}
 
-	if argv.Repo == "" {
-		return fmt.Errorf("Path to git repository must be specified")
-	}
-
-	fi, err = os.Stat(argv.Repo)
-	if os.IsNotExist(err) {
-		return fmt.Errorf("Following path doesn't exist: %v", argv.Repo)
-	}
-
-	if !fi.Mode().IsDir() {
-		return fmt.Errorf("Following path isn't directory: %v", argv.Repo)
-	}
-
 	if argv.CreateOrg && argv.Organization == "" {
 		return fmt.Errorf("You can not use --create-org without --org \"someorg\"")
+	}
+
+	// Force check without --create-org and do check if --repo is specified
+	if !argv.CreateOrg || argv.Repo != "" {
+		if argv.Repo == "" {
+			return fmt.Errorf("Path to git repository must be specified")
+		}
+
+		fi, err = os.Stat(argv.Repo)
+		if os.IsNotExist(err) {
+			return fmt.Errorf("Following path doesn't exist: %v", argv.Repo)
+		}
+
+		if !fi.Mode().IsDir() {
+			return fmt.Errorf("Following path isn't directory: %v", argv.Repo)
+		}
 	}
 
 	return nil

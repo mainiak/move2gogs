@@ -15,12 +15,6 @@ Using **HTTPS** whenever possible is strongly recommended.
 move2gogs --server https://foo.example.com
 ```
 
-### Create organization
-
-```
-move2gogs --server server-uri --token-file file-with-token --create-org --org someorg
-```
-
 ### Mirror local repository
 
 Without project name specified tool will use git directory name by default.
@@ -34,4 +28,18 @@ Or you can specify project name as you can see in following example.
 
 ```
 move2gogs --server server-uri --token-file file-with-token --repo /path/to/repo-xyz --project foobar
+```
+
+### Use organizations
+
+You can create organization with following example:
+
+```
+move2gogs --server server-uri --token-file file-with-token --create-org --org someorg
+```
+
+And then use organization in another command:
+
+```
+move2gogs --server server-uri --token-file file-with-token --org someorg --repo /path/to/repo-xyz
 ```
